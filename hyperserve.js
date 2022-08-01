@@ -3,6 +3,8 @@ import Hyperdrive from 'hyperdrive'
 import Hyperswarm from 'hyperswarm'
 import ram from 'random-access-memory'
 import { EventEmitter } from 'events'
+import http from 'http'
+import { defaultHttpHandler } from './http.js'
 
 let _corestore, _drive, _swarm
 
@@ -14,6 +16,8 @@ export class Hyperserve extends EventEmitter {
     this.opening.catch(console.error)
     this.opened = false
   }
+
+  serve = opts => httpServer(_drive, opts)
 
   ready = () => {
     return this.opening
@@ -64,6 +68,11 @@ export class Hyperserve extends EventEmitter {
     this.opened = false
     this.emit('close')
   }
+}
+
+async function httpServer (drive, { handler = defaultHttpHandler, port = 8080 } = {}) {
+  const server = http.createServer(handler(drive)).listen(port)
+  console.warn('http server listening at:', server.address())
 }
 
 function isString (s) {
