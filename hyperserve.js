@@ -3,8 +3,7 @@ import Hyperdrive from 'hyperdrive'
 import Hyperswarm from 'hyperswarm'
 import ram from 'random-access-memory'
 import { EventEmitter } from 'events'
-import http from 'http'
-import { defaultHttpHandler } from './http.js'
+import { httpServer } from './http.js'
 import fs from 'node:fs/promises'
 import path from 'path'
 import pull from 'pull-stream'
@@ -25,6 +24,7 @@ export class Hyperserve extends EventEmitter {
 
   put = async (url, filepath, readFileOpts) => await putBlob(_drive, url, await fs.readFile(filepath, readFileOpts))
   putDir = async (url, directory, glob = '**/*') => await putFiles(_drive, { url, directory, glob })
+  putBlob = async (url, data) => await putBlob(_drive, url, data)
 
   delete = async (url, opts = { recursive: true }) => await deleteBlobs(_drive, url, opts)
   del = async (url, opts = { recursive: true }) => await deleteBlobs(_drive, url, opts)
@@ -78,11 +78,6 @@ export class Hyperserve extends EventEmitter {
     this.opened = false
     this.emit('close')
   }
-}
-
-async function httpServer (drive, { handler = defaultHttpHandler, port = 8080 } = {}) {
-  const server = http.createServer(handler(drive)).listen(port)
-  console.warn('http server listening at:', server.address())
 }
 
 function isString (s) {

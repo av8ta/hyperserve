@@ -1,3 +1,12 @@
+import http from 'http'
+
+export async function httpServer (drive, { handler = defaultHttpHandler, port = 8080 } = {}) {
+  const server = http.createServer(handler(drive))
+  server.listen(port, () => {
+    console.warn(`  🎉 Server running at http://localhost:${port}`)
+  })
+}
+
 export function defaultHttpHandler (drive) {
   return async (req, res) => {
     const { url, method } = req
