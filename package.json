@@ -1,6 +1,6 @@
 {
   "name": "hyperserve",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "serve hyperdrive contents over http",
   "type": "module",
   "main": "index.js",
